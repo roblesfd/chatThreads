@@ -15,14 +15,18 @@ public class ChatClient {
         this.nombre = name;
     }
 
-    public void connect() throws IOException {
+    public void connect()  {
         try (
                 Socket socket = new Socket(serverAddress, port);
                 BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         ) {
-            System.out.println("Conectado al servidor del chat");
+            String msgBienvenida = """
+                    Conectado al servidor del chat
+                    'CTRL + X' y ENTER para terminar la conexión
+                    """;
+            System.out.println(msgBienvenida);
             out.println(nombre); // <- Envia el nombre al servidor una sola vez
 
             //Listener para recibir mensajes de otros clientes (sockets)
@@ -37,7 +41,6 @@ public class ChatClient {
                     }
                 } catch (IOException e) {
                     System.out.println("Conexión cerrada");
-                    throw new RuntimeException(e);
                 }
             });
             listener.start();
@@ -45,8 +48,16 @@ public class ChatClient {
             //Ingresa un mensaje y lo envia
             String msg;
             while ((msg = input.readLine()) != null) {
+                if(msg.length() == 1 && msg.charAt(0) == 24){
+                    System.out.println("Desconectándose del servidor...");
+                    out.println(msg);
+                    socket.close();
+                    break;
+                }
                 out.println(msg);
             }
+        }catch(IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
