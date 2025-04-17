@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ChatClient {
-    private static String serverAddress = "localhost";
-    private static int port = 12345;
+    private static final String serverAddress = "localhost";
+    private static final int port = 12345;
     private String nombre;
 
     public ChatClient(String name) {
@@ -22,42 +22,55 @@ public class ChatClient {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         ) {
-            String msgBienvenida = """
-                    Conectado al servidor del chat
-                    'CTRL + X' y ENTER para terminar la conexión
-                    """;
-            System.out.println(msgBienvenida);
-            out.println(nombre); // <- Envia el nombre al servidor una sola vez
+
+            showWelcomeMessage(out);
 
             //Listener para recibir mensajes de otros clientes (sockets)
             Thread listener = new Thread(() -> {
-                String msgFromServer;
-                try {
-                    while ((msgFromServer = in.readLine()) != null) {
-                        String mensajeFormateado = msgFromServer.startsWith(nombre + ":") ?
-                                Colores.VERDE + msgFromServer + Colores.RESET :
-                                Colores.CIAN + msgFromServer + Colores.RESET;
-                        System.out.println(mensajeFormateado);
-                    }
-                } catch (IOException e) {
-                    System.out.println("Conexión cerrada");
-                }
+                listenIncomingMessages(in);
             });
             listener.start();
 
             //Ingresa un mensaje y lo envia
-            String msg;
-            while ((msg = input.readLine()) != null) {
-                if(msg.length() == 1 && msg.charAt(0) == 24){
+            String msgToSend;
+            while ((msgToSend = input.readLine()) != null) {
+                //Si se ingreso CTRL + X
+                if(msgToSend.length() == 1 && msgToSend.charAt(0) == 24){
                     System.out.println("Desconectándose del servidor...");
-                    out.println(msg);
+                    out.println(msgToSend);
                     socket.close();
                     break;
+                }else if("/crearsala".equals(msgToSend)){
+                    System.out.println("Se ha creado una sala");
+                }else{
+                    out.println(msgToSend);
                 }
-                out.println(msg);
             }
         }catch(IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void showWelcomeMessage(PrintWriter out) {
+        String msgBienvenida = """
+                    Conectado al servidor del chat
+                    'CTRL + X' y ENTER para terminar la conexión
+                    """;
+        System.out.println(msgBienvenida);
+        out.println(nombre); // <- Envia el nombre del usuario al servidor una sola vez
+    }
+
+    private void listenIncomingMessages(BufferedReader in){
+        String msgFromServer;
+        try {
+            while ((msgFromServer = in.readLine()) != null) {
+                String mensajeFormateado = msgFromServer.startsWith(nombre + ":") ?
+                        Colores.VERDE + msgFromServer + Colores.RESET :
+                        Colores.CIAN + msgFromServer + Colores.RESET;
+                System.out.println(mensajeFormateado);
+            }
+        } catch (IOException e) {
+            System.out.println("Conexión cerrada");
         }
     }
 
