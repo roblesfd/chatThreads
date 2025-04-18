@@ -28,4 +28,8 @@ public record User(
     public boolean isInRoom(String roomName) {
         return chatRooms.contains(roomName);
     }
+
+    public User changeUsername(String newName) {
+        return new User(newName, this.joinDate(), this.lastConnection(), this.socket(), this.writer(), this.chatRooms());
+    }
 }

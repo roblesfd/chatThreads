@@ -8,7 +8,7 @@ REM Crear directorio out si no existe
 if not exist out mkdir out
 
 REM Compila todos los archivos .java
-javac -d out src\main\java\org\fernandodev\*.java
+javac -d out -cp src src\main\java\org\fernandodev\*.java src\main\java\org\fernandodev\chat_commands\*.java
 
 REM Ejecuta el servidor en una ventana nueva
 start cmd /k "java -cp out org.fernandodev.ChatServer"
