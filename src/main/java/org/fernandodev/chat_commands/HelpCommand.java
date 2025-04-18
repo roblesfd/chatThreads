@@ -12,8 +12,9 @@ public class HelpCommand implements Command{
                 /help: Muestra los comandos disponibles.
                 /cambiarnombre: Cambia tu nombre de usuario para mostrar.
                 /crearsala: Crea una sala de chat para hablar con otras personas.
-                /unirsesala: Entrar a una sala de chat disponible.
-                /dejarsala: Mientras se esta en una sala de chat, abandonarla.
+                /unirse: Entrar a una sala de chat disponible.
+                /dejar: Mientras se esta en una sala de chat, abandonarla.
+                /conectados: Muestra los usuarios que están conectados.
                 """;
         client.send(message);
     }

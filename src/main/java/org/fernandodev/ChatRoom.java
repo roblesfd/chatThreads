@@ -20,7 +20,7 @@ public class ChatRoom {
 
     public void addMember(ClientHandler member){
         members.add(member);
-        broadcast(member.getUsername() + " se ha unido a la sala.");
+        broadcast(member.user.username() + " se ha unido a la sala.");
     }
 
     public void removeMember(ClientHandler member){ members.remove(member); }
@@ -28,8 +28,6 @@ public class ChatRoom {
     public Set<ClientHandler> getMembers() {
         return members;
     }
-
-    public int getNumberOfMembers() { return members.size(); }
 
     public void broadcast(String message) {
         for(ClientHandler c : members) {

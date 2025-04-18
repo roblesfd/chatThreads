@@ -99,8 +99,8 @@ public class ChatServer {
         private Socket socket;
         private PrintWriter out;
         private String username;
-        private User user;
-        private ChatRoom currentChatRoom;
+        public User user;
+        public ChatRoom currentChatRoom;
 
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -151,7 +151,8 @@ public class ChatServer {
                 if(msg.startsWith("/")){
                     processCommand(msg);
                 }else if(currentChatRoom != null){
-                    sendToCurrentChatRoom(msg);
+                    ChatRoomContext context = new ChatRoomContext(username, currentChatRoom, this);
+                    ChatRoomHandler.sendToCurrentChatRoom(context, msg);
                 }
             }
         }
@@ -167,52 +168,19 @@ public class ChatServer {
             }
         }
 
-        public void sendToCurrentChatRoom(String message) {
-            if(currentChatRoom != null) {
-                currentChatRoom.broadcast(username + " " + message);
-            }else{
-                send("No estas en ninguna sala. Usa /entrarsala [sala-nombre]");
-            }
-        }
-
-        public void joinRoom(ChatRoom room){
-            this.currentChatRoom = room;
-            room.addMember(this);
-        }
-
-        public void leaveRoom(){
-            if(currentChatRoom != null){
-                currentChatRoom.removeMember(this);
-                user.removeChatRoom(currentChatRoom.getName());
-                currentChatRoom = null;
-            }
-        }
-
-        public ChatRoom getCurrentChatRoom(){
-            return currentChatRoom;
-        }
-
         private void broadcast(String message) {
             for (PrintWriter writer : clientWriters) {
                 writer.println(message);
             }
         }
 
-        public String getUsername() {
-            return username;
-        }
-
-        public User getUser() {
-            return user;
+        public void setUsername(String newName) {
+            this.username = newName;
+            this.user = this.user.changeUsername(newName); // Actualiza internamente también
         }
 
         public void send(String message) {
             out.println(message);
-        }
-
-        public void setUsername(String newName) {
-            this.username = newName;
-            this.user = this.user.changeUsername(newName); // Actualiza internamente también
         }
     }
 }

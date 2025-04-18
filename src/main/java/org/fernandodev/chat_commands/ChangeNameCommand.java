@@ -11,7 +11,7 @@ public class ChangeNameCommand implements Command {
             return;
         }
 
-        String oldName = client.getUsername();
+        String oldName = client.user.username();
         String newName = args[1];
 
         if (ChatServer.connectedUsers.containsKey(newName)) {
@@ -20,7 +20,7 @@ public class ChangeNameCommand implements Command {
         }
 
         ChatServer.connectedUsers.remove(oldName);
-        ChatServer.connectedUsers.put(newName, client.getUser().changeUsername(newName));
+        ChatServer.connectedUsers.put(newName, client.user.changeUsername(newName));
 
         client.setUsername(newName);
         client.send("Tu nombre ha sido cambiado a " + newName);

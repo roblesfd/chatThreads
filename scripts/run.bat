@@ -21,6 +21,5 @@ set CLIENT_COUNT=3
 
 REM Lanzar multiples clientes
 for /L %%i in (1,1,%CLIENT_COUNT%) do (
-    set "NOMBRE=Usuario-%%i"
-    start cmd /k java -cp out org.fernandodev.ChatClient !NOMBRE!
+    start cmd /k java -cp out org.fernandodev.ChatClient
 )

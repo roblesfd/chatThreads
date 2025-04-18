@@ -10,8 +10,9 @@ public class CommandHandler {
         commands.put("/help", new HelpCommand());
         commands.put("/cambiarnombre", new ChangeNameCommand());
         commands.put("/crearsala", new CreateChatRoomCommand());
-        commands.put("/unirsesala", new JoinChatRoomCommand());
-        commands.put("/dejarsala", new LeaveChatRoomCommand());
+        commands.put("/unirse", new JoinChatRoomCommand());
+        commands.put("/dejar", new LeaveChatRoomCommand());
+        commands.put("/conectados", new ConnectedUsersCommand());
     }
 
     public static Command getCommand(String cmdName) {

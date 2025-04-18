@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ChatClient {
     private static final String serverAddress = "localhost";
     private static final int port = 12345;
     private String username;
-
-    public ChatClient(String name) {
-        this.username = name;
-    }
 
     public void connect()  {
         try (
@@ -39,18 +36,19 @@ public class ChatClient {
         }
     }
 
+    public void obtainUsername(){
+        Scanner read = new Scanner(System.in);
+        System.out.println("Ingresa un nombre de usuario para comenzar");
+        String name = read.nextLine();
+        this.username = name;
+    }
+
     private void showWelcomeMessage(PrintWriter out) {
         String msgBienvenida = """
                     Conectado al servidor principal
                     'CTRL + X' y ENTER para terminar la conexión
                     
-                    Lista de Comandos:
-                    
-                    /help: Muestra los comandos disponibles.
-                    /cambiarnombre: Cambia tu nombre de usuario para mostrar.
-                    /crearsala: Crea una sala de chat para hablar con otras personas.
-                    /unirsesala: Entrar a una sala de chat disponible.
-                    /dejarsala: Mientras se esta en una sala de chat, abandonarla.
+                    /help Para mostrar comandos disponibles.
                     """;
         System.out.println(msgBienvenida);
         out.println(username); // <- Envia el nombre del usuario al servidor una sola vez
@@ -70,15 +68,12 @@ public class ChatClient {
         }
     }
 
-    public void setUsername(String newName) { this.username = newName; }
-
     public void sendMessageListener(BufferedReader input, PrintWriter out, Socket socket) throws IOException {
         String msgToSend;
         while ((msgToSend = input.readLine()) != null) {
             //Si se ingreso CTRL + X
             if(msgToSend.length() == 1 && msgToSend.charAt(0) == 24){
                 System.out.println("Desconectándose del servidor...");
-                out.println(msgToSend);
                 socket.close();
                 break;
             //Si solo fue un texto
@@ -89,8 +84,8 @@ public class ChatClient {
     }
 
     public static void main(String[] args) throws IOException {
-        String name = (args.length > 0) ? args[0] : "Anónimo";
-        ChatClient client1 = new ChatClient(name);
+        ChatClient client1 = new ChatClient();
+        client1.obtainUsername();
         client1.connect();
     }
 }
