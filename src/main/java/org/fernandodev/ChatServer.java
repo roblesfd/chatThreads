@@ -98,9 +98,10 @@ public class ChatServer {
     public static class ClientHandler implements Runnable {
         private Socket socket;
         private PrintWriter out;
-        private String username;
+        public String username;
         public User user;
         public ChatRoom currentChatRoom;
+        private String privateChatWith; //nombre de usuario
 
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -182,5 +183,6 @@ public class ChatServer {
         public void send(String message) {
             out.println(message);
         }
+
     }
 }

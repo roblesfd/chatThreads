@@ -1,16 +1,13 @@
 package org.fernandodev;
 
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.fernandodev.ChatServer.ClientHandler;
 
 public class ChatRoom {
     private String name;
-    private Set<ClientHandler> members = ConcurrentHashMap.newKeySet();
+    private ConcurrentHashMap<String, ClientHandler> members = new ConcurrentHashMap<>();
 
     public ChatRoom(String name) {
         this.name = name;
@@ -19,19 +16,19 @@ public class ChatRoom {
     public String getName() { return name; }
 
     public void addMember(ClientHandler member){
-        members.add(member);
+        members.put(member.username, member);
         broadcast(member.user.username() + " se ha unido a la sala.");
     }
 
     public void removeMember(ClientHandler member){ members.remove(member); }
 
-    public Set<ClientHandler> getMembers() {
+    public ConcurrentHashMap<String, ClientHandler> getMembers() {
         return members;
     }
 
     public void broadcast(String message) {
-        for(ClientHandler c : members) {
-            c.send("[Sala " + name + "] " + message);
+        for(Map.Entry<String, ClientHandler> c : members.entrySet()) {
+            c.getValue().send("[Sala " + name + "] " + message);
         }
     }
 }
